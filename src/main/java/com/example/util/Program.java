@@ -25,8 +25,8 @@ public class Program {
 
         //Currency currency = new Currency("TST", "Test Currency", "T");
         //dao.addCurrency(currency);
-        //CurrencyService service = new CurrencyService();
-        //System.out.println(service.getAllCurrencies());
+        CurrencyService service = new CurrencyService();
+        System.out.println(service.getAllCurrencies());
 
     }
 }
