@@ -11,8 +11,7 @@ public class Currency {
     public Currency() {
     }
 
-    public Currency(int id, String code, String fullName, String sign) {
-        this.id = id;
+    public Currency(String code, String fullName, String sign) {
         this.code = code;
         this.fullName = fullName;
         this.sign = sign;
@@ -60,5 +59,15 @@ public class Currency {
     @Override
     public int hashCode() {
         return Objects.hash(id, code, fullName, sign);
+    }
+
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", sign='" + sign + '\'' +
+                '}';
     }
 }

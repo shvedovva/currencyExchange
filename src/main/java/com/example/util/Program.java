@@ -2,6 +2,7 @@ package com.example.util;
 
 import com.example.dao.CurrencyDao;
 import com.example.model.Currency;
+import com.example.service.CurrencyService;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class Program {
         //DatabaseManager.getConnection();
         //dbm.initDatabase();
 
-        CurrencyDao dao = new CurrencyDao();
+        //CurrencyDao dao = new CurrencyDao();
 
         /*System.out.println(dao.getAllCurrencies());
 
@@ -22,10 +23,10 @@ public class Program {
         System.out.println(RUB);*/
 
 
-        Currency currency = new Currency("TST", "Test Currency", "T");
-        dao.addCurrency(currency);
-
-        System.out.println(dao.getCurrencyById(4));
+        //Currency currency = new Currency("TST", "Test Currency", "T");
+        //dao.addCurrency(currency);
+        //CurrencyService service = new CurrencyService();
+        //System.out.println(service.getAllCurrencies());
 
     }
 }
