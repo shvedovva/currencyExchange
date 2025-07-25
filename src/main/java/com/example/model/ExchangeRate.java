@@ -62,4 +62,14 @@ public class ExchangeRate {
     public int hashCode() {
         return Objects.hash(id, baseCurrency, targetCurrency, rate);
     }
+
+    @Override
+    public String toString() {
+        return "ExchangeRate{" +
+                "id=" + id +
+                ", baseCurrency=" + baseCurrency +
+                ", targetCurrency=" + targetCurrency +
+                ", rate=" + rate +
+                '}';
+    }
 }

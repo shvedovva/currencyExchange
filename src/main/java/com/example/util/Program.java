@@ -1,6 +1,7 @@
 package com.example.util;
 
 import com.example.dao.CurrencyDao;
+import com.example.dao.ExchangeRateDao;
 import com.example.model.Currency;
 import com.example.service.CurrencyService;
 
@@ -25,8 +26,10 @@ public class Program {
 
         //Currency currency = new Currency("TST", "Test Currency", "T");
         //dao.addCurrency(currency);
-        CurrencyService service = new CurrencyService();
-        System.out.println(service.getAllCurrencies());
+        //CurrencyService service = new CurrencyService();
+        //System.out.println(service.getAllCurrencies());
+        ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
+        System.out.println(exchangeRateDao.getAllExchangeRates());
 
     }
 }
