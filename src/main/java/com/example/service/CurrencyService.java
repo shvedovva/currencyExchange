@@ -2,9 +2,11 @@ package com.example.service;
 
 import com.example.dao.CurrencyDao;
 import com.example.dto.CurrencyDto;
+import com.example.exception.BadRequestException;
 import com.example.exception.CurrencyNotFoundException;
 import com.example.model.Currency;
-import jakarta.ws.rs.BadRequestException;
+
+
 
 import java.util.List;
 import java.util.stream.Collectors;

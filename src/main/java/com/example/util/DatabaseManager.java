@@ -15,6 +15,11 @@ public class DatabaseManager {
     private static final HikariDataSource dataSource;
 
     static {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(DB_URL);
         config.setMaximumPoolSize(4);
