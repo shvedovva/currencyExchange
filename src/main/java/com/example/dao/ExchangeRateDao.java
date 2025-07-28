@@ -40,7 +40,7 @@ public class ExchangeRateDao {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка при получении списка обменных курсов", e);
         } finally {
             DatabaseManager.closeConnection(conn);
         }
@@ -75,12 +75,43 @@ public class ExchangeRateDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка при получении обменного курса для валютной пары: " + baseCode + "/" + targetBase, e);
         } finally {
             DatabaseManager.closeConnection(conn);
         }
         return Optional.empty();
     }
+
+    public Optional<ExchangeRate> getExchangeRateByCurrencyIds(int baseId, int targetId){
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            String sql = "SELECT er.ID, er.BaseCurrencyId, er.TargetCurrencyId, er.Rate, " +
+                    "bc.ID as BaseID, bc.Code as BaseCode, bc.FullName as BaseFullName, bc.Sign as BaseSign, " +
+                    "tc.ID as TargetID, tc.Code as TargetCode, tc.FullName as TargetFullName, tc.Sign as TargetSign " +
+                    "FROM ExchangeRates er " +
+                    "JOIN Currencies bc ON er.BaseCurrencyId = bc.ID " +
+                    "JOIN Currencies tc ON er.TargetCurrencyId = tc.ID " +
+                    "WHERE er.BaseCurrencyId = ? AND er.TargetCurrencyId = ?";
+            try(PreparedStatement stmt = conn.prepareStatement(sql)){
+                stmt.setInt(1, baseId);
+                stmt.setInt(2, targetId);
+                try(ResultSet rs = stmt.executeQuery()){
+                    if(rs.next()){
+                        ExchangeRate exchangeRate = mapResultSetToExchangeRate(rs);
+                        return Optional.of(exchangeRate);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка при получении обменного курса по ID валют", e);
+        } finally {
+            DatabaseManager.closeConnection(conn);
+        }
+
+        return Optional.empty();
+    }
+
 
     private ExchangeRate mapResultSetToExchangeRate(ResultSet rs) throws SQLException {
         Currency baseCurrency=  new Currency(
