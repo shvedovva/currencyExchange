@@ -1,13 +1,13 @@
 package com.example.dao;
 
+import com.example.exception.DuplicateResourceException;
+import com.example.exception.ExchangeRateNotFoundException;
 import com.example.model.Currency;
 import com.example.model.ExchangeRate;
 import com.example.util.DatabaseManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -110,6 +110,55 @@ public class ExchangeRateDao {
         }
 
         return Optional.empty();
+    }
+
+    public ExchangeRate addExchangeRate(String baseCode, String targetCode, BigDecimal rate){
+        Currency baseCurrency = currencyDao.getCurrencyByCode(baseCode)
+                .orElseThrow(() -> new ExchangeRateNotFoundException("Базовая валюта не найдена: " + baseCode));
+        Currency targetCurrency = currencyDao.getCurrencyByCode(targetCode)
+                .orElseThrow(()-> new ExchangeRateNotFoundException("Целевая валюта не найдена: " + targetCode));
+        return addExchangeRate(baseCurrency.getId(), targetCurrency.getId(), rate);
+    }
+
+    private ExchangeRate addExchangeRate(int baseId, int targetId, BigDecimal rate) {
+        Currency baseCurrency = currencyDao.getCurrencyById(baseId)
+                .orElseThrow(()-> new ExchangeRateNotFoundException("Базовая валюта с ID " + baseId + " не найдена"));
+        Currency targetCurrency = currencyDao.getCurrencyById(targetId)
+                .orElseThrow(() -> new ExchangeRateNotFoundException("Целевая валюта с ID " + targetId + " не найдена"));
+
+        Connection conn = null;
+
+        try {
+            conn = DatabaseManager.getConnection();
+            String sql = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
+
+            try(PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+                stmt.setInt(1, baseId);
+                stmt.setInt(2, targetId);
+                stmt.setBigDecimal(3, rate);
+
+                int affectedRows = stmt.executeUpdate();
+
+                if(affectedRows == 0){
+                    throw new SQLException("Создание обменного курса не удалось, ни одна строка не была добавлена");
+                }
+                try(ResultSet generatedKeys = stmt.getGeneratedKeys()){
+                    if (generatedKeys.next()) {
+                        int id = generatedKeys.getInt(1);
+                        return new ExchangeRate(id, baseCurrency, targetCurrency, rate  );
+                    } else {
+                        throw new SQLException("Создание обменного курса не удалось, ID не был получен");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            if(e.getMessage().contains("UNIQUE constraint failed")){
+                throw new DuplicateResourceException("Обменный курс для пары: " + baseCurrency.getCode() + "/" + targetCurrency.getCode() + " уже существует");
+            }
+            throw new RuntimeException("Ошибка при добавлении обменного курса", e);
+        } finally {
+            DatabaseManager.closeConnection(conn);
+        }
     }
 
 
