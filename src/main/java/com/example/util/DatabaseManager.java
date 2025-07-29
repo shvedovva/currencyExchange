@@ -18,7 +18,7 @@ public class DatabaseManager {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка загрузки драйвера", e);
         }
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(DB_URL);
