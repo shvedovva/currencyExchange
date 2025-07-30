@@ -19,6 +19,8 @@ public class ExchangeRateService {
 
     public List<ExchangeRateDto> getAllExchangeRates(){
         return exchangeRateDao.getAllExchangeRates().stream()
+                /*.filter(exchangeRate -> exchangeRate!=null)
+                .filter(exchangeRate -> exchangeRate.getBaseCurrency()!=null && exchangeRate.getTargetCurrency() !=null)*/
                 .map(this::mapExchangeRateToDto)
                 .collect(Collectors.toList());
     }
@@ -53,6 +55,11 @@ public class ExchangeRateService {
         ExchangeRateDto dto = new ExchangeRateDto();
         dto.setId(exchangeRate.getId());
 
+        /*System.out.println("Debug: exchangeRate = " + exchangeRate);
+        if (exchangeRate != null) {
+            System.out.println("Debug: baseCurrency = " + exchangeRate.getBaseCurrency());
+            System.out.println("Debug: targetCurrency = " + exchangeRate.getTargetCurrency());
+        }*/
         CurrencyDto baseCurrencyDto = new CurrencyDto();
         baseCurrencyDto.setId(exchangeRate.getBaseCurrency().getId());
         baseCurrencyDto.setName(exchangeRate.getBaseCurrency().getFullName());

@@ -178,7 +178,7 @@ public class ExchangeRateDao {
         ExchangeRate exchangeRate = new ExchangeRate();
         exchangeRate.setId(rs.getInt("ID"));
         exchangeRate.setBaseCurrency(baseCurrency);
-        exchangeRate.setBaseCurrency(targetCurrency);
+        exchangeRate.setTargetCurrency(targetCurrency);
         exchangeRate.setRate(rs.getBigDecimal("Rate"));
 
         return exchangeRate;
