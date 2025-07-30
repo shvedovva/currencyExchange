@@ -51,6 +51,23 @@ public class ExchangeRateService {
         return mapExchangeRateToDto(exchangeRate);
     }
 
+    public ExchangeRateDto updateExchangeRate(String currencyPair, BigDecimal rate) {
+        if (currencyPair == null || currencyPair.length() != 6) {
+            throw new BadRequestException("Неверный формат валютной пары. Должно быть 6 символов (например, USDRUB)");
+        }
+
+        String baseCode = currencyPair.substring(0, 3);
+        String targetCode = currencyPair.substring(3, 6);
+
+        if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0){
+            throw new BadRequestException("Курс должен быть положительным числом");
+        }
+
+        ExchangeRate updateRate = exchangeRateDao.updateExchangeRate(baseCode, targetCode, rate);
+        return mapExchangeRateToDto(updateRate);
+    }
+
+
     private ExchangeRateDto mapExchangeRateToDto(ExchangeRate exchangeRate) {
         ExchangeRateDto dto = new ExchangeRateDto();
         dto.setId(exchangeRate.getId());
