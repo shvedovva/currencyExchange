@@ -7,6 +7,16 @@
 
     <display-name>Currency Exchange API</display-name>
 
+    <filter>
+        <filter-name>ExceptionHandlerFilter</filter-name>
+        <filter-class>com.example.filter.ExceptionHandlerFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ExceptionHandlerFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Сервлеты -->
     <servlet>
         <servlet-name>CurrencyServlet</servlet-name>
