@@ -5,6 +5,7 @@ import com.example.dto.CurrencyDto;
 import com.example.dto.ExchangeRateDto;
 import com.example.exception.BadRequestException;
 import com.example.model.ExchangeRate;
+import com.example.util.CurrencyValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,14 +38,22 @@ public class ExchangeRateService {
                 .orElseThrow(()-> new BadRequestException("Обменный курс не найден!"));
     }
     public ExchangeRateDto addExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate){
-        if (baseCurrencyCode == null || baseCurrencyCode.isEmpty()){
+        if (baseCurrencyCode == null || baseCurrencyCode.trim().isEmpty()){
             throw new BadRequestException("Код базовой валюты не может быть пустым!");
         }
-        if (targetCurrencyCode == null || targetCurrencyCode.isEmpty()){
+        if (targetCurrencyCode == null || targetCurrencyCode.trim().isEmpty()){
             throw new BadRequestException("Код целевой валюты не может быть пустым!");
         }
         if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0){
             throw new BadRequestException("Курс должен быть положительным числом!");
+        }
+
+        if (!CurrencyValidator.isValidCurrencyCode(baseCurrencyCode)){
+            throw new BadRequestException("Недопустимый код базовой валюты: " + baseCurrencyCode);
+        }
+
+        if (!CurrencyValidator.isValidCurrencyCode(targetCurrencyCode)){
+            throw new BadRequestException("Недопустимый код целевой валюты: " + targetCurrencyCode);
         }
 
         ExchangeRate exchangeRate = exchangeRateDao.addExchangeRate(baseCurrencyCode,targetCurrencyCode, rate);

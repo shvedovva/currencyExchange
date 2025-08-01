@@ -5,10 +5,11 @@ import com.example.dto.CurrencyDto;
 import com.example.exception.BadRequestException;
 import com.example.exception.CurrencyNotFoundException;
 import com.example.model.Currency;
-
+import com.example.util.CurrencyValidator;
 
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class CurrencyService {
@@ -35,18 +36,21 @@ public class CurrencyService {
     }
 
     public CurrencyDto addCurrency(String name, String code, String sign){
-        if (name == null || name.isEmpty()){
+        if (name == null || name.trim().isEmpty()){
             throw new BadRequestException("Имя валюты не может быть пустым");
         }
-        if (code == null || code.isEmpty()){
+        if (code == null || code.trim().isEmpty()){
             throw new BadRequestException("Код валюты не может быть пустым");
         }
-        if (sign == null || sign.isEmpty()){
+        if (sign == null || sign.trim().isEmpty()){
             throw new BadRequestException("Знак валюты не может быть пустым");
+        }
+        if (!CurrencyValidator.isValidCurrencyCode(code)){
+            throw new BadRequestException("Недопустимый код валюты: " + code);
         }
         Currency currency = new Currency();
         currency.setFullName(name);
-        currency.setCode(code);
+        currency.setCode(code.toUpperCase());
         currency.setSign(sign);
 
         Currency addedCurrency = currencyDao.addCurrency(currency);

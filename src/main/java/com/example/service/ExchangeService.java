@@ -9,6 +9,7 @@ import com.example.exception.CurrencyNotFoundException;
 import com.example.exception.ExchangeRateNotFoundException;
 import com.example.model.Currency;
 import com.example.model.ExchangeRate;
+import com.example.util.CurrencyValidator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,6 +35,13 @@ public class ExchangeService {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0){
             throw new BadRequestException("Сумма должна быть положительным числом!");
         }
+        if (!CurrencyValidator.isValidCurrencyCode(fromCurrencyCode)){
+            throw new BadRequestException("Недопустимый код исходной валюты: " + fromCurrencyCode);
+        }
+        if (!CurrencyValidator.isValidCurrencyCode(toCurrencyCode)){
+            throw new BadRequestException("Недопустимый код целевой валюты: " + toCurrencyCode);
+        }
+
         //Получаем валюты по кодам
         Currency fromCurrency = currencyDao.getCurrencyByCode(fromCurrencyCode)
                 .orElseThrow(()->new CurrencyNotFoundException("Валюта с кодом" + fromCurrencyCode + " не найдена"));
